@@ -1,9 +1,10 @@
+import uuid
 from django.db import models
 
 # TODO: Create your models here.
 
 
-class HouseListing(models.Model):
+class House(models.Model):
     AREA_UNIT_CHOICES = [("SqFt", "Square Feet")]
     HOME_TYPE_CHOICES = [
         ("Apartment", "Apartment"),
@@ -49,19 +50,28 @@ class HouseListing(models.Model):
     state = models.CharField(max_length=2)
     zipcode = models.CharField(max_length=8)
 
+
+class ZillowListing(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    id = models.UUIDField(
+        primary_key=True,
+        editable=False
+    )
+    estimate_amount = models.PositiveIntegerField(null=True, blank=True)
+    estimate_last_updated = models.DateField(null=True, blank=True)
+    house = models.ForeignKey(House, on_delete=models.CASCADE)
     last_sold_date = models.DateField(null=True, blank=True)
     last_sold_price = models.PositiveIntegerField(null=True, blank=True)
     link = models.URLField()
     price = models.PositiveIntegerField(null=True, blank=True)
     rent_price = models.PositiveIntegerField(null=True, blank=True)
-    rentzestimate_amount = models.PositiveIntegerField(null=True, blank=True)
-    rentzestimate_last_updated = models.DateField(null=True, blank=True)
+    rent_estimate_amount = models.PositiveIntegerField(null=True, blank=True)
+    rent_estimate_last_updated = models.DateField(null=True, blank=True)
     tax_value = models.DecimalField(
         max_digits=12,
         decimal_places=2,
         blank=True
     )
     tax_year = models.PositiveIntegerField(null=True, blank=True)
-    zestimate_amount = models.PositiveIntegerField(null=True, blank=True)
-    zestimate_last_updated = models.DateField(null=True, blank=True)
-    zillow_id = models.UUIDField(unique=True, db_index=True)
