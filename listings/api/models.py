@@ -53,13 +53,17 @@ class ZillowListing(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-    id = models.UUIDField(
+    id = models.BigIntegerField(
         primary_key=True,
         editable=False
     )
     estimate_amount = models.PositiveIntegerField(null=True, blank=True)
     estimate_last_updated = models.DateField(null=True, blank=True)
-    house = models.ForeignKey(House, on_delete=models.CASCADE)
+    house = models.ForeignKey(
+        House,
+        related_name='zillow_listing',
+        on_delete=models.CASCADE
+    )
     last_sold_date = models.DateField(null=True, blank=True)
     last_sold_price = models.PositiveIntegerField(null=True, blank=True)
     link = models.URLField()
