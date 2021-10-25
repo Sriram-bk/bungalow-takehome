@@ -1,8 +1,6 @@
 import uuid
 from django.db import models
 
-# TODO: Create your models here.
-
 
 class House(models.Model):
     AREA_UNIT_CHOICES = [("SqFt", "Square Feet")]
