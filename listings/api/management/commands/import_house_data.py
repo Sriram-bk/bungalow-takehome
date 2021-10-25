@@ -4,7 +4,7 @@ import re
 from datetime import datetime
 from django.core.management.base import BaseCommand, CommandError
 
-from api.models import HouseListing
+from api.models import House, ZillowListing
 
 
 class Command(BaseCommand):
@@ -31,46 +31,50 @@ class Command(BaseCommand):
     def parse_csv_file(self, csv_file_name):
         with open(csv_file_name, "r") as csv_file:
             csv_reader = csv.DictReader(csv_file, skipinitialspace=True)
-            house_listings = []
+            zillow_listings = []
 
             for row in csv_reader:
                 for key, val in row.items():
                     if not val:
                         row[key] = None
 
-                house_listings.append(HouseListing(
+                house = House.objects.create(
                     area_unit=row["area_unit"],
                     bathrooms=row["bathrooms"],
                     bedrooms=row["bedrooms"],
                     home_size=row["home_size"],
                     home_type=row["home_type"],
+                    property_size=row["property_size"],
+                    address=row["address"],
+                    city=row["city"],
+                    state=row["state"],
+                    zipcode=row["zipcode"],
+                    year_built=row["year_built"]
+                )
+
+                zillow_listings.append(ZillowListing(
+                    id=int(row["zillow_id"]),
+                    estimate_amount=row["zestimate_amount"],
+                    estimate_last_updated=self.normalize_date(
+                        row["zestimate_last_updated"]
+                    ),
+                    house=house,
                     last_sold_date=self.normalize_date(
                         row["last_sold_date"]
                     ),
                     last_sold_price=row["last_sold_price"],
                     link=row["link"],
                     price=self.normalize_price(row["price"]),
-                    property_size=row["property_size"],
                     rent_price=row["rent_price"],
-                    rentzestimate_amount=row["rentzestimate_amount"],
-                    rentzestimate_last_updated=self.normalize_date(
+                    rent_estimate_amount=row["rentzestimate_amount"],
+                    rent_estimate_last_updated=self.normalize_date(
                         row["rentzestimate_last_updated"]
                     ),
                     tax_value=row["tax_value"],
-                    tax_year=row["tax_year"],
-                    year_built=row["year_built"],
-                    zestimate_amount=row["zestimate_amount"],
-                    zestimate_last_updated=self.normalize_date(
-                        row["zestimate_last_updated"]
-                    ),
-                    zillow_id=int(row["zillow_id"]),
-                    address=row["address"],
-                    city=row["city"],
-                    state=row["state"],
-                    zipcode=row["zipcode"]
+                    tax_year=row["tax_year"]
                 ))
 
-        HouseListing.objects.bulk_create(house_listings)
+        ZillowListing.objects.bulk_create(zillow_listings)
 
     def normalize_price(self, price):
         if not price:
