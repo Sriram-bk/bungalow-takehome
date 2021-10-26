@@ -18,7 +18,13 @@ class HouseViewSet(
     queryset = House.objects.all()
     serializer_class = HouseSerializer
     pagination_class = StandardResultsSetPagination
-    filterset_fields = ['city', 'zipcode', 'bedrooms', 'bathrooms']
+    filterset_fields = [
+        'city',
+        'zipcode',
+        'bedrooms',
+        'bathrooms',
+        'home_type'
+    ]
 
 
 class ZillowListingViewSet(
@@ -34,5 +40,6 @@ class ZillowListingViewSet(
         'house__city',
         'house__zipcode',
         'house__bedrooms',
-        'house__bathrooms'
+        'house__bathrooms',
+        'house__home_type'
     ]
